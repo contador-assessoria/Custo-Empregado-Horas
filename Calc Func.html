@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculadora de Salário CLT</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: auto;
+        }
+        h2 {
+            text-align: center;
+        }
+        .section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        input[type="text"],
+        input[type="number"],
+        input[type="time"],
+        input[type="date"],
+        textarea {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            box-sizing: border-box;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+        .checkbox-group input {
+            width: auto;
+            margin-right: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+        th, td {
+            padding: 8px;
+            text-align: center;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        textarea {
+            height: 500px;
+            resize: vertical;
+        }
+        textarea {
+            font-family: "Courier New", Courier, monospace; /* Utiliza fonte monoespaçada para melhor alinhamento */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Calculadora de Salário CLT</h2>
+
+        <div class="section">
+            <h3>Informações do Empregado</h3>
+            <label for="nome">Nome do Empregado:</label>
+            <input type="text" id="nome" placeholder="Digite o nome do empregado">
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="hasDataAdm">
+                <label for="hasDataAdm" style="margin:0;">Data de Admissão é obrigatória</label>
+            </div>
+
+            <label for="dataAdm">Data de Admissão:</label>
+            <input type="date" id="dataAdm" disabled>
+        </div>
+
+        <div class="section">
+            <h3>Horário de Trabalho</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Dia</th>
+                        <th>Folga</th>
+                        <th>Entrada 1</th>
+                        <th>Saída Intervalo</th>
+                        <th>Entrada 2</th>
+                        <th>Saída Final</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Segunda-feira -->
+                    <tr>
+                        <td>Segunda-feira</td>
+                        <td>
+                            <input type="checkbox" class="folga" id="folgaSegunda">
+                        </td>
+                        <td>
+                            <input type="time" id="segundaEntrada1" value="08:40">
+                        </td>
+                        <td>
+                            <input type="time" id="segundaSaidaIntervalo" value="12:00">
+                        </td>
+                        <td>
+                            <input type="time" id="segundaEntrada2" value="14:00">
+                        </td>
+                        <td>
+                            <input type="time" id="segundaSaidaFinal" value="18:00">
+                        </td>
+                    </tr>
+                
+                    <!-- Terça-feira -->
+                    <tr>
+                        <td>Terça-feira</td>
+                        <td>
+                            <input type="checkbox" class="folga" id="folgaTerca">
+                        </td>
+                        <td>
+                            <input type="time" id="tercaEntrada1" value="08:40">
+                        </td>
+                        <td>
+                            <input type="time" id="tercaSaidaIntervalo" value="12:00">
+                        </td>
+                        <td>
+                            <input type="time" id="tercaEntrada2" value="14:00">
+                        </td>
+                        <td>
+                            <input type="time" id="tercaSaidaFinal" value="18:00">
+                        </td>
+                    </tr>
+                
+                    <!-- Quarta-feira -->
+                    <tr>
+                        <td>Quarta-feira</td>
+                        <td>
+                            <input type="checkbox" class="folga" id="folgaQuarta">
+                        </td>
+                        <td>
+                            <input type="time" id="quartaEntrada1" value="08:40">
+                        </td>
+                        <td>
+                            <input type="time" id="quartaSaidaIntervalo" value="12:00">
+                        </td>
+                        <td>
+                            <input type="time" id="quartaEntrada2" value="14:00">
+                        </td>
+                        <td>
+                            <input type="time" id="quartaSaidaFinal" value="18:00">
+                        </td>
+                    </tr>
+                
+                    <!-- Quinta-feira -->
+                    <tr>
+                        <td>Quinta-feira</td>
+                        <td>
+                            <input type="checkbox" class="folga" id="folgaQuinta">
+                        </td>
+                        <td>
+                            <input type="time" id="quintaEntrada1" value="08:40">
+                        </td>
+                        <td>
+                            <input type="time" id="quintaSaidaIntervalo" value="12:00">
+                        </td>
+                        <td>
+                            <input type="time" id="quintaEntrada2" value="14:00">
+                        </td>
+                        <td>
+                            <input type="time" id="quintaSaidaFinal" value="18:00">
+                        </td>
+                    </tr>
+                
+                    <!-- Sexta-feira -->
+                    <tr>
+                        <td>Sexta-feira</td>
+                        <td>
+                            <input type="checkbox" class="folga" id="folgaSexta">
+                        </td>
+                        <td>
+                            <input type="time" id="sextaEntrada1" value="08:40">
+                        </td>
+                        <td>
+                            <input type="time" id="sextaSaidaIntervalo" value="12:00">
+                        </td>
+                        <td>
+                            <input type="time" id="sextaEntrada2" value="14:00">
+                        </td>
+                        <td>
+                            <input type="time" id="sextaSaidaFinal" value="18:00">
+                        </td>
+                    </tr>
+                
+                    <!-- Sábado -->
+                    <tr>
+                        <td>Sábado</td>
+                        <td>
+                            <input type="checkbox" class="folga" id="folgaSabado">
+                        </td>
+                        <td>
+                            <input type="time" id="sabadoEntrada1" value="08:40">
+                        </td>
+                        <td>
+                            <input type="time" id="sabadoSaidaIntervalo" value="12:00">
+                        </td>
+                        <td>
+                            <input type="time" id="sabadoEntrada2" value="" placeholder="--:--">
+                        </td>
+                        <td>
+                            <input type="time" id="sabadoSaidaFinal" value="" placeholder="--:--">
+                        </td>
+                    </tr>
+                
+                    <!-- Domingo -->
+                    <tr>
+                        <td>Domingo</td>
+                        <td>
+                            <input type="checkbox" class="folga" id="folgaDomingo" checked>
+                        </td>
+                        <td>
+                            <input type="time" id="domingoEntrada1" value="" disabled>
+                        </td>
+                        <td>
+                            <input type="time" id="domingoSaidaIntervalo" value="" disabled>
+                        </td>
+                        <td>
+                            <input type="time" id="domingoEntrada2" value="" disabled>
+                        </td>
+                        <td>
+                            <input type="time" id="domingoSaidaFinal" value="" disabled>
+                        </td>
+                    </tr>
+                </tbody>
+                
+            </table>
+            <p><em>Nota: Se apenas Entrada 1 e Saída Final forem preenchidos, será considerado um único período sem intervalo.</em></p>
+        </div>
+
+        <div class="section">
+            <h3>Informações Salariais</h3>
+            <label for="salarioBruto">Salário Bruto (R$):</label>
+            <input type="number" id="salarioBruto" placeholder="Digite o salário bruto" step="0.01">
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="insalubridade">
+                <label for="insalubridade" style="margin:0;">Insalubridade</label>
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="periculosidade">
+                <label for="periculosidade" style="margin:0;">Periculosidade</label>
+            </div>
+        </div>
+
+        <button onclick="calcular()">Calcular</button>
+
+        <div class="section">
+            <h3>Resultados</h3>
+            <textarea id="resultado" readonly></textarea>
+        </div>
+    </div>
+
+    <script>
+        // Habilitar ou desabilitar os campos de horário com base na seleção de folga
+        document.querySelectorAll('.folga').forEach(function(checkbox) {
+            checkbox.addEventListener('change', function() {
+                const row = this.parentElement.parentElement;
+                const inputs = row.querySelectorAll('input[type="time"]');
+                inputs.forEach(input => {
+                    input.disabled = this.checked;
+                    if (this.checked) {
+                        input.value = '';
+                    } else {
+                        // Preencher com horários padrão se estiverem vazios
+                        if (!input.value) {
+                            const id = input.id;
+                            if (id.includes('Entrada1')) input.value = '08:40';
+                            if (id.includes('SaidaIntervalo')) input.value = '12:00';
+                            if (id.includes('Entrada2')) input.value = '14:00';
+                            if (id.includes('SaidaFinal')) input.value = '18:00';
+                        }
+                    }
+                });
+            });
+        });
+
+        // Habilitar ou desabilitar o campo de data de admissão
+        document.getElementById('hasDataAdm').addEventListener('change', function() {
+            document.getElementById('dataAdm').disabled = !this.checked;
+            if (!this.checked) {
+                document.getElementById('dataAdm').value = '';
+            }
+        });
+
+        function calcular() {
+            // Coletar dados do formulário
+            const nome = document.getElementById('nome').value.trim();
+            const hasDataAdm = document.getElementById('hasDataAdm').checked;
+            const dataAdm = document.getElementById('dataAdm').value;
+            const salarioBruto = parseFloat(document.getElementById('salarioBruto').value);
+            const insalubridade = document.getElementById('insalubridade').checked;
+            const periculosidade = document.getElementById('periculosidade').checked;
+
+            // Validação
+            if (hasDataAdm && !dataAdm) {
+                alert('Por favor, insira a data de admissão.');
+                return;
+            }
+            if (!salarioBruto || salarioBruto <= 0) {
+                alert('Por favor, insira um salário bruto válido.');
+                return;
+            }
+
+            // Função para calcular horas trabalhadas e noturnas
+            function calcularHoras(entrada1, saidaIntervalo, entrada2, saidaFinal) {
+                if (!entrada1 || !saidaFinal) return { total: 0, noturnas: 0 };
+
+                // Converter horários para minutos
+                function timeToMinutes(time) {
+                    if (!time) return null;
+                    const [h, m] = time.split(':').map(Number);
+                    return h * 60 + m;
+                }
+
+                const e1 = timeToMinutes(entrada1);
+                const sF = timeToMinutes(saidaFinal);
+
+                let totalMin = 0;
+                let noturnas = 0;
+
+                if (saidaIntervalo && entrada2) {
+                    const sI = timeToMinutes(saidaIntervalo);
+                    const e2 = timeToMinutes(entrada2);
+
+                    // Validações básicas
+                    if (sI <= e1 || e2 <= sI || sF <= e2) {
+                        alert('Horários inválidos. Verifique a sequência dos horários.');
+                        throw 'Horários inválidos';
+                    }
+
+                    const periodo1 = sI - e1;
+                    const periodo2 = sF - e2;
+
+                    totalMin += periodo1 + periodo2;
+
+                    // Calcular horas noturnas
+                    for (let m = e1; m < sI; m++) {
+                        let horaAtual = (m % (24 * 60)) / 60;
+                        if (horaAtual >= 22 || horaAtual < 5) {
+                            noturnas += 1 / 60;
+                        }
+                    }
+                    for (let m = e2; m < sF; m++) {
+                        let horaAtual = (m % (24 * 60)) / 60;
+                        if (horaAtual >= 22 || horaAtual < 5) {
+                            noturnas += 1 / 60;
+                        }
+                    }
+                } else {
+                    // Trabalha apenas 1 período
+                    totalMin += sF - e1;
+
+                    // Calcular horas noturnas
+                    for (let m = e1; m < sF; m++) {
+                        let horaAtual = (m % (24 * 60)) / 60;
+                        if (horaAtual >= 22 || horaAtual < 5) {
+                            noturnas += 1 / 60;
+                        }
+                    }
+                }
+
+                const totalHoras = totalMin / 60;
+                return { total: totalHoras, noturnas: noturnas };
+            }
+
+            // Função para calcular IRRF
+            function calcularIRRF(base) {
+                let irrf = 0;
+                if (base <= 2259.20) {
+                    irrf = 0;
+                } else if (base <= 2826.65) {
+                    irrf = (base * 0.075) - 169.44;
+                } else if (base <= 3751.05) {
+                    irrf = (base * 0.15) - 381.44;
+                } else if (base <= 4664.68) {
+                    irrf = (base * 0.225) - 662.77;
+                } else {
+                    irrf = (base * 0.275) - 896.00;
+                }
+                return irrf > 0 ? irrf : 0;
+            }
+
+            // Calcular horas para cada dia
+            const dias = ['segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado', 'domingo'];
+            let totalHoras = 0;
+            let totalNoturnas = 0;
+            let detalhesHorarios = {};
+
+            try {
+                dias.forEach(dia => {
+                    const folga = document.getElementById(`folga${capitalize(dia)}`).checked;
+                    if (!folga) {
+                        const entrada1 = document.getElementById(`${dia}Entrada1`).value;
+                        const saidaIntervalo = document.getElementById(`${dia}SaidaIntervalo`).value;
+                        const entrada2 = document.getElementById(`${dia}Entrada2`).value;
+                        const saidaFinal = document.getElementById(`${dia}SaidaFinal`).value;
+
+                        // Verificar se está trabalhando 1 ou 2 períodos
+                        const trabalhando1Periodo = (!saidaIntervalo || !entrada2);
+
+                        if (trabalhando1Periodo && (!entrada1 || !saidaFinal)) {
+                            throw `Por favor, preencha os horários para ${capitalize(dia)} ou marque como folga.`;
+                        }
+                        if (!trabalhando1Periodo && (!entrada1 || !saidaIntervalo || !entrada2 || !saidaFinal)) {
+                            throw `Por favor, preencha todos os horários para ${capitalize(dia)} ou deixe os campos de intervalo vazios para 1 período.`;
+                        }
+
+                        const { total, noturnas } = calcularHoras(entrada1, saidaIntervalo, entrada2, saidaFinal);
+                        totalHoras += total;
+                        totalNoturnas += noturnas;
+
+                        detalhesHorarios[dia] = {
+                            entrada1,
+                            saidaIntervalo: trabalhando1Periodo ? '-' : saidaIntervalo,
+                            entrada2: trabalhando1Periodo ? '-' : entrada2,
+                            saidaFinal,
+                            total: total.toFixed(2),
+                            trabalhando1Periodo
+                        };
+                    } else {
+                        detalhesHorarios[dia] = { folga: true };
+                    }
+                });
+            } catch (error) {
+                console.error(error);
+                alert(error);
+                return;
+            }
+
+            // Cálculo de adicionais
+            const adicionalNoturno = totalNoturnas * (salarioBruto / 220) * 0.20;
+
+            // Cálculo de insalubridade e periculosidade
+            let adicionalInsalubridade = 0;
+            let adicionalPericulosidade = 0;
+            if (insalubridade) {
+                adicionalInsalubridade = salarioBruto * 0.10; // 10%
+            }
+            if (periculosidade) {
+                adicionalPericulosidade = salarioBruto * 0.30; // 30%
+            }
+
+            // Salário Bruto Ajustado para cálculo de INSS e IRRF
+            let salarioBrutoAjustado = salarioBruto + adicionalNoturno + adicionalInsalubridade + adicionalPericulosidade;
+
+            // Cálculo do INSS baseado na tabela progressiva
+            let inss = 0;
+            if (salarioBrutoAjustado <= 1412.00) {
+                inss = salarioBrutoAjustado * 0.075;
+            } else if (salarioBrutoAjustado <= 2666.68) {
+                inss = 1412.00 * 0.075 + (salarioBrutoAjustado - 1412.00) * 0.09;
+            } else if (salarioBrutoAjustado <= 4000.03) {
+                inss = 1412.00 * 0.075 + (2666.68 - 1412.00) * 0.09 + (salarioBrutoAjustado - 2666.68) * 0.12;
+            } else if (salarioBrutoAjustado <= 7786.82) {
+                inss = 1412.00 * 0.075 + (2666.68 - 1412.00) * 0.09 + (4000.03 - 2666.68) * 0.12 + (salarioBrutoAjustado - 4000.03) * 0.14;
+            } else {
+                inss = 7786.02 * 0.14;
+            }
+
+            // Cálculo do IRRF
+            const baseIRRF = salarioBrutoAjustado - inss;
+            const irrf = calcularIRRF(baseIRRF);
+
+            // FGTS
+            const fgts = salarioBruto * 0.08; // FGTS é calculado sobre o salário bruto
+
+            // Salário Líquido
+            let salarioLiquido = salarioBrutoAjustado - inss - irrf;
+
+            // Cálculo proporcional se data de admissão for fornecida
+            let proporcional = false;
+            let diasTrabalhados = 30; // Assumindo mês completo
+            if (hasDataAdm) {
+                const data = new Date(dataAdm);
+                const hoje = new Date();
+                const mesAdm = data.getMonth();
+                const anoAdm = data.getFullYear();
+                if (mesAdm === hoje.getMonth() && anoAdm === hoje.getFullYear()) {
+                    const diaAdm = data.getDate();
+                    diasTrabalhados = 30 - diaAdm + 1;
+                    proporcional = true;
+                }
+            }
+
+            // Ajustar valores proporcionalmente
+            if (proporcional) {
+                const fator = diasTrabalhados / 30;
+                salarioBrutoAjustado *= fator;
+                inss *= fator;
+                irrf *= fator;
+                salarioLiquido *= fator;
+                fgts *= fator;
+            }
+
+            // Preparar detalhes dos horários para o resumo
+            let horariosResumo = '';
+            dias.forEach(dia => {
+                if (detalhesHorarios[dia].folga) {
+                    horariosResumo += `  - *${capitalize(dia)}:* Folga\n`;
+                } else if (detalhesHorarios[dia].trabalhando1Periodo) {
+                    horariosResumo += `  - *${capitalize(dia)}:* ${detalhesHorarios[dia].entrada1} - ${detalhesHorarios[dia].saidaFinal} (${detalhesHorarios[dia].total}h)\n`;
+                } else {
+                    horariosResumo += `  - *${capitalize(dia)}:* ${detalhesHorarios[dia].entrada1} - ${detalhesHorarios[dia].saidaIntervalo}, ${detalhesHorarios[dia].entrada2} - ${detalhesHorarios[dia].saidaFinal} (${detalhesHorarios[dia].total}h)\n`;
+                }
+            });
+
+            // Função para capitalizar a primeira letra
+            function capitalize(str) {
+                return str.charAt(0).toUpperCase() + str.slice(1);
+            }
+
+            // Função para padronizar o comprimento das strings
+            function padString(str, length) {
+                return str.length > length ? str.slice(0, length) : str.padEnd(length, ' ');
+            }
+
+// Preparar resultado em markdown
+const resultado = `
+*Resumo de Contrato*
+
+*Informações do Empregado:*
+- *Nome:* ${nome || 'Não informado'}
+- *Data de Admissão:* ${hasDataAdm ? dataAdm : 'Não informado'}
+
+*Carga Horária:*
+- *Semanal:* ${totalHoras.toFixed(2)} horas
+- *Horários:*
+
+\`\`\`
+Dia         Horários                          Total
+${dias.map(dia => {
+    const detalhe = detalhesHorarios[dia];
+    const diaFormatado = padString(capitalize(dia), 12); // Ajuste baseado no maior dia (Domingo - 7 caracteres + 5 espaços)
+    let horarios = '';
+    let total = '';
+
+    if (detalhe.folga) {
+        horarios = 'Folga';
+        total = '0.00h';
+    } else if (detalhe.trabalhando1Periodo) {
+        horarios = `${detalhe.entrada1} - ${detalhe.saidaFinal}`;
+        total = `${detalhe.total}h`;
+    } else {
+        horarios = `${detalhe.entrada1} - ${detalhe.saidaIntervalo}, ${detalhe.entrada2} - ${detalhe.saidaFinal}`;
+        total = `${detalhe.total}h`;
+    }
+
+    const horariosFormatado = padString(horarios, 35);
+    const totalFormatado = padString(total, 6);
+
+    return `${diaFormatado}${horariosFormatado}${totalFormatado}`;
+}).join('\n')}
+\`\`\`
+
+*Salário:*
+- *Salário Bruto:* R$${salarioBruto.toFixed(2)}
+- *Salário Líquido:* R$${salarioLiquido.toFixed(2)}
+
+*Descontos:*
+- *INSS:* R$${inss.toFixed(2)}
+- *IRRF:* R$${irrf.toFixed(2)}
+- *FGTS (8%):* R$${fgts.toFixed(2)}
+
+*Adicionais:*
+- *Horas Noturnas:* ${totalNoturnas.toFixed(2)} horas semanais com adicional de 20%
+- *Insalubridade:* ${insalubridade ? 'Sim (10%)' : 'Não'}
+- *Periculosidade:* ${periculosidade ? 'Sim (30%)' : 'Não'}
+
+*Valores para a Empresa:*
+- *Salário Bruto* R$${salarioBruto.toFixed(2)}
+- *FGTS (8%)* R$${fgts.toFixed(2)}
+- *Total Encargos (FGTS)*R$${fgts.toFixed(2)}
+
+*Valores para o Empregado:*
+- *Salário Líquido:* R$${salarioLiquido.toFixed(2)}
+- *Adicionais:* FGTS depositado mensalmente
+- *Descontos:* INSS R$${inss.toFixed(2)}, IRRF R$${irrf.toFixed(2)}
+`.trim();
+
+document.getElementById('resultado').value = resultado;
+
+        }
+
+        // Função para capitalizar a primeira letra
+        function capitalize(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        // Preencher horários padrão quando a página carrega
+        window.onload = function() {
+            const dias = ['segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado'];
+            dias.forEach(dia => {
+                const entrada1 = document.getElementById(`${dia}Entrada1`);
+                const saidaIntervalo = document.getElementById(`${dia}SaidaIntervalo`);
+                const entrada2 = document.getElementById(`${dia}Entrada2`);
+                const saidaFinal = document.getElementById(`${dia}SaidaFinal`);
+                
+                if (dia !== 'sabado') {
+                    entrada1.value = '08:40';
+                    saidaIntervalo.value = '12:00';
+                    entrada2.value = '14:00';
+                    saidaFinal.value = '18:00';
+                } else {
+                    entrada1.value = '08:40';
+                    saidaIntervalo.value = '12:00';
+                    entrada2.value = '14:00';
+                    saidaFinal.value = '18:00';
+                }
+            });
+        };
+    </script>
+</body>
+</html>
