@@ -462,10 +462,10 @@
             let adicionalInsalubridade = 0;
             let adicionalPericulosidade = 0;
             if (insalubridade) {
-                adicionalInsalubridade = salarioBruto * 0.10; // 10%
+                adicionalInsalubridade = salarioBruto * 0.20; // 20%
             }
             if (periculosidade) {
-                adicionalPericulosidade = salarioBruto * 0.30; // 30%
+                adicionalPericulosidade = salarioBruto * 0.40; // 40%
             }
 
             // Salário Bruto Ajustado para cálculo de INSS e IRRF
@@ -591,8 +591,8 @@ ${dias.map(dia => {
 
 *Adicionais:*
 - *Horas Noturnas:* ${totalNoturnas.toFixed(2)} horas semanais com adicional de 20%
-- *Insalubridade:* ${insalubridade ? 'Sim (10%)' : 'Não'}
-- *Periculosidade:* ${periculosidade ? 'Sim (30%)' : 'Não'}
+- *Insalubridade:* ${insalubridade ? 'Sim (20%)' : 'Não'}
+- *Periculosidade:* ${periculosidade ? 'Sim (40%)' : 'Não'}
 
 *Valores para a Empresa:*
 - *Salário Bruto* R$${salarioBruto.toFixed(2)}
@@ -627,7 +627,7 @@ document.getElementById('resultado').value = resultado;
                     entrada1.value = '08:30';
                     saidaIntervalo.value = '12:00';
                     entrada2.value = '14:00';
-                    saidaFinal.value = '18:00';
+                    saidaFinal.value = '17:50';
                 } else {
                     entrada1.value = '08:30';
                     saidaIntervalo.value = '12:00';
