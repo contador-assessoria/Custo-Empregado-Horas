@@ -116,7 +116,7 @@
                             <input type="checkbox" class="folga" id="folgaSegunda">
                         </td>
                         <td>
-                            <input type="time" id="segundaEntrada1" value="08:40">
+                            <input type="time" id="segundaEntrada1" value="08:30">
                         </td>
                         <td>
                             <input type="time" id="segundaSaidaIntervalo" value="12:00">
@@ -125,7 +125,7 @@
                             <input type="time" id="segundaEntrada2" value="14:00">
                         </td>
                         <td>
-                            <input type="time" id="segundaSaidaFinal" value="18:00">
+                            <input type="time" id="segundaSaidaFinal" value="17:50">
                         </td>
                     </tr>
                 
@@ -136,7 +136,7 @@
                             <input type="checkbox" class="folga" id="folgaTerca">
                         </td>
                         <td>
-                            <input type="time" id="tercaEntrada1" value="08:40">
+                            <input type="time" id="tercaEntrada1" value="08:30">
                         </td>
                         <td>
                             <input type="time" id="tercaSaidaIntervalo" value="12:00">
@@ -145,7 +145,7 @@
                             <input type="time" id="tercaEntrada2" value="14:00">
                         </td>
                         <td>
-                            <input type="time" id="tercaSaidaFinal" value="18:00">
+                            <input type="time" id="tercaSaidaFinal" value="17:50">
                         </td>
                     </tr>
                 
@@ -156,7 +156,7 @@
                             <input type="checkbox" class="folga" id="folgaQuarta">
                         </td>
                         <td>
-                            <input type="time" id="quartaEntrada1" value="08:40">
+                            <input type="time" id="quartaEntrada1" value="08:30">
                         </td>
                         <td>
                             <input type="time" id="quartaSaidaIntervalo" value="12:00">
@@ -165,7 +165,7 @@
                             <input type="time" id="quartaEntrada2" value="14:00">
                         </td>
                         <td>
-                            <input type="time" id="quartaSaidaFinal" value="18:00">
+                            <input type="time" id="quartaSaidaFinal" value="17:50">
                         </td>
                     </tr>
                 
@@ -176,7 +176,7 @@
                             <input type="checkbox" class="folga" id="folgaQuinta">
                         </td>
                         <td>
-                            <input type="time" id="quintaEntrada1" value="08:40">
+                            <input type="time" id="quintaEntrada1" value="08:30">
                         </td>
                         <td>
                             <input type="time" id="quintaSaidaIntervalo" value="12:00">
@@ -185,7 +185,7 @@
                             <input type="time" id="quintaEntrada2" value="14:00">
                         </td>
                         <td>
-                            <input type="time" id="quintaSaidaFinal" value="18:00">
+                            <input type="time" id="quintaSaidaFinal" value="17:50">
                         </td>
                     </tr>
                 
@@ -196,7 +196,7 @@
                             <input type="checkbox" class="folga" id="folgaSexta">
                         </td>
                         <td>
-                            <input type="time" id="sextaEntrada1" value="08:40">
+                            <input type="time" id="sextaEntrada1" value="08:30">
                         </td>
                         <td>
                             <input type="time" id="sextaSaidaIntervalo" value="12:00">
@@ -205,7 +205,7 @@
                             <input type="time" id="sextaEntrada2" value="14:00">
                         </td>
                         <td>
-                            <input type="time" id="sextaSaidaFinal" value="18:00">
+                            <input type="time" id="sextaSaidaFinal" value="17:50">
                         </td>
                     </tr>
                 
@@ -216,16 +216,16 @@
                             <input type="checkbox" class="folga" id="folgaSabado">
                         </td>
                         <td>
-                            <input type="time" id="sabadoEntrada1" value="08:40">
+                            <input type="time" id="sabadoEntrada1" value="08:30">
                         </td>
                         <td>
                             <input type="time" id="sabadoSaidaIntervalo" value="12:00">
                         </td>
                         <td>
-                            <input type="time" id="sabadoEntrada2" value="" placeholder="--:--">
+                            <input type="time" id="sabadoEntrada2" value="" placeholder="14:00">
                         </td>
                         <td>
-                            <input type="time" id="sabadoSaidaFinal" value="" placeholder="--:--">
+                            <input type="time" id="sabadoSaidaFinal" value="" placeholder="17:50">
                         </td>
                     </tr>
                 
@@ -292,10 +292,10 @@
                         // Preencher com horários padrão se estiverem vazios
                         if (!input.value) {
                             const id = input.id;
-                            if (id.includes('Entrada1')) input.value = '08:40';
+                            if (id.includes('Entrada1')) input.value = '08:30';
                             if (id.includes('SaidaIntervalo')) input.value = '12:00';
                             if (id.includes('Entrada2')) input.value = '14:00';
-                            if (id.includes('SaidaFinal')) input.value = '18:00';
+                            if (id.includes('SaidaFinal')) input.value = '17:50';
                         }
                     }
                 });
@@ -624,15 +624,15 @@ document.getElementById('resultado').value = resultado;
                 const saidaFinal = document.getElementById(`${dia}SaidaFinal`);
                 
                 if (dia !== 'sabado') {
-                    entrada1.value = '08:40';
+                    entrada1.value = '08:30';
                     saidaIntervalo.value = '12:00';
                     entrada2.value = '14:00';
                     saidaFinal.value = '18:00';
                 } else {
-                    entrada1.value = '08:40';
+                    entrada1.value = '08:30';
                     saidaIntervalo.value = '12:00';
                     entrada2.value = '14:00';
-                    saidaFinal.value = '18:00';
+                    saidaFinal.value = '17:50';
                 }
             });
         };
