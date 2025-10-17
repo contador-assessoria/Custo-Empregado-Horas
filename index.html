@@ -2,7 +2,8 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Calculadora de Salário CLT</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Custo de Funcionário - Simples Nacional</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -71,15 +72,38 @@
         textarea {
             height: 500px;
             resize: vertical;
+            font-family: "Courier New", Courier, monospace;
         }
-        textarea {
-            font-family: "Courier New", Courier, monospace; /* Utiliza fonte monoespaçada para melhor alinhamento */
+        .constants-info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-size: 0.9rem;
+            color: #1565c0;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>Calculadora de Salário CLT</h2>
+        <h2>Calculadora de Custo de Funcionário - Simples Nacional 2025</h2>
+
+        <div class="constants-info">
+            <strong>Constantes 2025:</strong><br>
+            • Salário Mínimo: R$ 1.518,00<br>
+            • Teto INSS: R$ 8.157,41<br>
+            • Isenção IRRF: Até R$ 2.428,80<br>
+            • Encargos Simples Nacional (setor limpeza): ~27,44%
+        </div>
 
         <div class="section">
             <h3>Informações do Empregado</h3>
@@ -222,10 +246,10 @@
                             <input type="time" id="sabadoSaidaIntervalo" value="12:00">
                         </td>
                         <td>
-                            <input type="time" id="sabadoEntrada2" value="" placeholder="14:00">
+                            <input type="time" id="sabadoEntrada2" value="">
                         </td>
                         <td>
-                            <input type="time" id="sabadoSaidaFinal" value="" placeholder="17:50">
+                            <input type="time" id="sabadoSaidaFinal" value="">
                         </td>
                     </tr>
                 
@@ -249,9 +273,8 @@
                         </td>
                     </tr>
                 </tbody>
-                
             </table>
-            <p><em>Nota: Se apenas Entrada 1 e Saída Final forem preenchidos, será considerado um único período sem intervalo. ATENÇÃO: Ainda não funciona para horários que iniciam em um dia e terminam no outro </em></p>
+            <p><em>Nota: Se apenas Entrada 1 e Saída Final forem preenchidos, será considerado período único sem intervalo.</em></p>
         </div>
 
         <div class="section">
@@ -261,24 +284,68 @@
 
             <div class="checkbox-group">
                 <input type="checkbox" id="insalubridade">
-                <label for="insalubridade" style="margin:0;">Insalubridade</label>
+                <label for="insalubridade" style="margin:0;">Insalubridade (20% do salário mínimo)</label>
             </div>
 
             <div class="checkbox-group">
                 <input type="checkbox" id="periculosidade">
-                <label for="periculosidade" style="margin:0;">Periculosidade</label>
+                <label for="periculosidade" style="margin:0;">Periculosidade (30% do salário base)</label>
             </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="valeTransporte">
+                <label for="valeTransporte" style="margin:0;">Vale Transporte (até 6% do salário)</label>
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="valeAlimentacao">
+                <label for="valeAlimentacao" style="margin:0;">Vale Alimentação (benefício opcional)</label>
+            </div>
+
+            <label for="valorValeAlimentacao">Valor Vale Alimentação (R$):</label>
+            <input type="number" id="valorValeAlimentacao" placeholder="Ex: 300.00" step="0.01" disabled>
         </div>
 
-        <button onclick="calcular()">Calcular</button>
+        <button onclick="calcular()">Calcular Custo Total</button>
 
         <div class="section">
             <h3>Resultados</h3>
-            <textarea id="resultado" readonly></textarea>
+            <div class="warning">
+                ⚠️ <strong>Importante:</strong> Esta simulação considera empresa do Simples Nacional (Anexo III/IV - Serviços). 
+                Consulte sempre um contador para cálculos oficiais específicos da sua situação.
+            </div>
+            <textarea id="resultado" readonly placeholder="Os resultados aparecerão aqui após o cálculo..."></textarea>
+            <button onclick="copiarResultado()" style="background-color: #28a745;">Copiar para WhatsApp</button>
         </div>
     </div>
 
     <script>
+        // Constantes atualizadas para 2025
+        const CONSTANTES = {
+            SALARIO_MINIMO: 1518.00,
+            TETO_INSS: 8157.41,
+            FAIXAS_INSS: [
+                { min: 0, max: 1518.00, aliquota: 0.075, deducao: 0.00 },
+                { min: 1518.01, max: 2526.67, aliquota: 0.09, deducao: 11.34 },
+                { min: 2526.68, max: 3777.99, aliquota: 0.12, deducao: 70.86 },
+                { min: 3778.00, max: 4190.84, aliquota: 0.14, deducao: 125.95 },
+                { min: 4190.85, max: 8157.41, aliquota: 0.14, deducao: 144.92 }
+            ],
+            FAIXAS_IRRF: [
+                { min: 0, max: 2428.80, aliquota: 0, deducao: 0 },
+                { min: 2428.81, max: 3224.40, aliquota: 0.075, deducao: 182.16 },
+                { min: 3224.41, max: 4299.20, aliquota: 0.15, deducao: 437.76 },
+                { min: 4299.21, max: 5373.99, aliquota: 0.225, deducao: 775.99 },
+                { min: 5374.00, max: Infinity, aliquota: 0.275, deducao: 1169.99 }
+            ],
+            ENCARGOS_SIMPLES: {
+                FGTS: 0.08,
+                DECIMO_TERCEIRO: 0.0833,
+                FERIAS: 0.1111,
+                ANEXO_III_IV: 0.06 // 6% para serviços no Simples Nacional
+            }
+        };
+
         // Habilitar ou desabilitar os campos de horário com base na seleção de folga
         document.querySelectorAll('.folga').forEach(function(checkbox) {
             checkbox.addEventListener('change', function() {
@@ -310,111 +377,135 @@
             }
         });
 
+        // Habilitar/desabilitar campo de vale alimentação
+        document.getElementById('valeAlimentacao').addEventListener('change', function() {
+            document.getElementById('valorValeAlimentacao').disabled = !this.checked;
+            if (!this.checked) {
+                document.getElementById('valorValeAlimentacao').value = '';
+            }
+        });
+
+        function calcularINSS(salarioBruto) {
+            for (let faixa of CONSTANTES.FAIXAS_INSS) {
+                if (salarioBruto >= faixa.min && salarioBruto <= faixa.max) {
+                    return Math.max(0, (salarioBruto * faixa.aliquota) - faixa.deducao);
+                }
+            }
+            // Valor máximo de INSS
+            return (CONSTANTES.TETO_INSS * 0.14) - 144.92;
+        }
+
+        function calcularIRRF(baseCalculo) {
+            for (let faixa of CONSTANTES.FAIXAS_IRRF) {
+                if (baseCalculo >= faixa.min && baseCalculo <= faixa.max) {
+                    return Math.max(0, (baseCalculo * faixa.aliquota) - faixa.deducao);
+                }
+            }
+            return 0;
+        }
+
+        function calcularHoras(entrada1, saidaIntervalo, entrada2, saidaFinal) {
+            if (!entrada1 || !saidaFinal) return { total: 0, noturnas: 0 };
+
+            function timeToMinutes(time) {
+                if (!time) return null;
+                const [h, m] = time.split(':').map(Number);
+                return h * 60 + m;
+            }
+
+            const e1 = timeToMinutes(entrada1);
+            const sF = timeToMinutes(saidaFinal);
+            let totalMin = 0;
+            let noturnas = 0;
+
+            if (saidaIntervalo && entrada2) {
+                const sI = timeToMinutes(saidaIntervalo);
+                const e2 = timeToMinutes(entrada2);
+
+                if (sI <= e1 || e2 <= sI || sF <= e2) {
+                    throw 'Horários inválidos. Verifique a sequência.';
+                }
+
+                const periodo1 = sI - e1;
+                const periodo2 = sF - e2;
+                totalMin += periodo1 + periodo2;
+
+                // Calcular horas noturnas (22h às 5h)
+                for (let m = e1; m < sI; m++) {
+                    let horaAtual = (m % (24 * 60)) / 60;
+                    if (horaAtual >= 22 || horaAtual < 5) {
+                        noturnas += 1 / 60;
+                    }
+                }
+                for (let m = e2; m < sF; m++) {
+                    let horaAtual = (m % (24 * 60)) / 60;
+                    if (horaAtual >= 22 || horaAtual < 5) {
+                        noturnas += 1 / 60;
+                    }
+                }
+            } else {
+                totalMin += sF - e1;
+                for (let m = e1; m < sF; m++) {
+                    let horaAtual = (m % (24 * 60)) / 60;
+                    if (horaAtual >= 22 || horaAtual < 5) {
+                        noturnas += 1 / 60;
+                    }
+                }
+            }
+
+            return { total: totalMin / 60, noturnas: noturnas };
+        }
+
+        function formatarMoeda(valor) {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(valor);
+        }
+
+        function padString(str, length) {
+            return str.length > length ? str.slice(0, length) : str.padEnd(length, ' ');
+        }
+
+        function capitalize(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
         function calcular() {
-            // Coletar dados do formulário
-            const nome = document.getElementById('nome').value.trim();
-            const hasDataAdm = document.getElementById('hasDataAdm').checked;
-            const dataAdm = document.getElementById('dataAdm').value;
-            const salarioBruto = parseFloat(document.getElementById('salarioBruto').value);
-            const insalubridade = document.getElementById('insalubridade').checked;
-            const periculosidade = document.getElementById('periculosidade').checked;
-
-            // Validação
-            if (hasDataAdm && !dataAdm) {
-                alert('Por favor, insira a data de admissão.');
-                return;
-            }
-            if (!salarioBruto || salarioBruto <= 0) {
-                alert('Por favor, insira um salário bruto válido.');
-                return;
-            }
-
-            // Função para calcular horas trabalhadas e noturnas
-            function calcularHoras(entrada1, saidaIntervalo, entrada2, saidaFinal) {
-                if (!entrada1 || !saidaFinal) return { total: 0, noturnas: 0 };
-
-                // Converter horários para minutos
-                function timeToMinutes(time) {
-                    if (!time) return null;
-                    const [h, m] = time.split(':').map(Number);
-                    return h * 60 + m;
-                }
-
-                const e1 = timeToMinutes(entrada1);
-                const sF = timeToMinutes(saidaFinal);
-
-                let totalMin = 0;
-                let noturnas = 0;
-
-                if (saidaIntervalo && entrada2) {
-                    const sI = timeToMinutes(saidaIntervalo);
-                    const e2 = timeToMinutes(entrada2);
-
-                    // Validações básicas
-                    if (sI <= e1 || e2 <= sI || sF <= e2) {
-                        alert('Horários inválidos. Verifique a sequência dos horários.');
-                        throw 'Horários inválidos';
-                    }
-
-                    const periodo1 = sI - e1;
-                    const periodo2 = sF - e2;
-
-                    totalMin += periodo1 + periodo2;
-
-                    // Calcular horas noturnas
-                    for (let m = e1; m < sI; m++) {
-                        let horaAtual = (m % (24 * 60)) / 60;
-                        if (horaAtual >= 22 || horaAtual < 5) {
-                            noturnas += 1 / 60;
-                        }
-                    }
-                    for (let m = e2; m < sF; m++) {
-                        let horaAtual = (m % (24 * 60)) / 60;
-                        if (horaAtual >= 22 || horaAtual < 5) {
-                            noturnas += 1 / 60;
-                        }
-                    }
-                } else {
-                    // Trabalha apenas 1 período
-                    totalMin += sF - e1;
-
-                    // Calcular horas noturnas
-                    for (let m = e1; m < sF; m++) {
-                        let horaAtual = (m % (24 * 60)) / 60;
-                        if (horaAtual >= 22 || horaAtual < 5) {
-                            noturnas += 1 / 60;
-                        }
-                    }
-                }
-
-                const totalHoras = totalMin / 60;
-                return { total: totalHoras, noturnas: noturnas };
-            }
-
-            // Função para calcular IRRF
-            function calcularIRRF(base) {
-                let irrf = 0;
-                if (base <= 2259.20) {
-                    irrf = 0;
-                } else if (base <= 2826.65) {
-                    irrf = (base * 0.075) - 169.44;
-                } else if (base <= 3751.05) {
-                    irrf = (base * 0.15) - 381.44;
-                } else if (base <= 4664.68) {
-                    irrf = (base * 0.225) - 662.77;
-                } else {
-                    irrf = (base * 0.275) - 896.00;
-                }
-                return irrf > 0 ? irrf : 0;
-            }
-
-            // Calcular horas para cada dia
-            const dias = ['segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado', 'domingo'];
-            let totalHoras = 0;
-            let totalNoturnas = 0;
-            let detalhesHorarios = {};
-
             try {
+                // Coletar dados do formulário
+                const nome = document.getElementById('nome').value.trim();
+                const hasDataAdm = document.getElementById('hasDataAdm').checked;
+                const dataAdm = document.getElementById('dataAdm').value;
+                let salarioBruto = parseFloat(document.getElementById('salarioBruto').value);
+                const insalubridade = document.getElementById('insalubridade').checked;
+                const periculosidade = document.getElementById('periculosidade').checked;
+                const valeTransporte = document.getElementById('valeTransporte').checked;
+                const valeAlimentacao = document.getElementById('valeAlimentacao').checked;
+                const valorValeAlimentacao = parseFloat(document.getElementById('valorValeAlimentacao').value) || 0;
+
+                // Validações
+                if (!nome) {
+                    alert('Por favor, informe o nome do empregado.');
+                    return;
+                }
+
+                if (hasDataAdm && !dataAdm) {
+                    alert('Por favor, insira a data de admissão.');
+                    return;
+                }
+
+                if (!salarioBruto || salarioBruto <= 0) {
+                    alert('Por favor, insira um salário bruto válido.');
+                    return;
+                }
+
+                // Calcular horas para cada dia
+                const dias = ['segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado', 'domingo'];
+                let totalHoras = 0;
+                let totalNoturnas = 0;
+                let detalhesHorarios = {};
+
                 dias.forEach(dia => {
                     const folga = document.getElementById(`folga${capitalize(dia)}`).checked;
                     if (!folga) {
@@ -423,14 +514,13 @@
                         const entrada2 = document.getElementById(`${dia}Entrada2`).value;
                         const saidaFinal = document.getElementById(`${dia}SaidaFinal`).value;
 
-                        // Verificar se está trabalhando 1 ou 2 períodos
                         const trabalhando1Periodo = (!saidaIntervalo || !entrada2);
 
                         if (trabalhando1Periodo && (!entrada1 || !saidaFinal)) {
-                            throw `Por favor, preencha os horários para ${capitalize(dia)} ou marque como folga.`;
+                            throw `Preencha os horários para ${capitalize(dia)} ou marque como folga.`;
                         }
                         if (!trabalhando1Periodo && (!entrada1 || !saidaIntervalo || !entrada2 || !saidaFinal)) {
-                            throw `Por favor, preencha todos os horários para ${capitalize(dia)} ou deixe os campos de intervalo vazios para 1 período.`;
+                            throw `Preencha todos os horários para ${capitalize(dia)}.`;
                         }
 
                         const { total, noturnas } = calcularHoras(entrada1, saidaIntervalo, entrada2, saidaFinal);
@@ -449,190 +539,193 @@
                         detalhesHorarios[dia] = { folga: true };
                     }
                 });
-            } catch (error) {
-                console.error(error);
-                alert(error);
-                return;
-            }
 
-            // Cálculo de adicionais
-            const adicionalNoturno = totalNoturnas * (salarioBruto / 220) * 0.20;
+                // Cálculo de adicionais
+                let adicionalInsalubridade = 0;
+                let adicionalPericulosidade = 0;
+                let adicionalNoturno = 0;
 
-            // Cálculo de insalubridade e periculosidade
-            let adicionalInsalubridade = 0;
-            let adicionalPericulosidade = 0;
-            if (insalubridade) {
-                adicionalInsalubridade = salarioBruto * 0.20; // 20%
-            }
-            if (periculosidade) {
-                adicionalPericulosidade = salarioBruto * 0.40; // 40%
-            }
-
-            // Salário Bruto Ajustado para cálculo de INSS e IRRF
-            let salarioBrutoAjustado = salarioBruto + adicionalNoturno + adicionalInsalubridade + adicionalPericulosidade;
-
-            // Cálculo do INSS baseado na tabela progressiva
-            let inss = 0;
-            if (salarioBrutoAjustado <= 1412.00) {
-                inss = salarioBrutoAjustado * 0.075;
-            } else if (salarioBrutoAjustado <= 2666.68) {
-                inss = 1412.00 * 0.075 + (salarioBrutoAjustado - 1412.00) * 0.09;
-            } else if (salarioBrutoAjustado <= 4000.03) {
-                inss = 1412.00 * 0.075 + (2666.68 - 1412.00) * 0.09 + (salarioBrutoAjustado - 2666.68) * 0.12;
-            } else if (salarioBrutoAjustado <= 7786.82) {
-                inss = 1412.00 * 0.075 + (2666.68 - 1412.00) * 0.09 + (4000.03 - 2666.68) * 0.12 + (salarioBrutoAjustado - 4000.03) * 0.14;
-            } else {
-                inss = 7786.02 * 0.14;
-            }
-
-            // Cálculo do IRRF
-            const baseIRRF = salarioBrutoAjustado - inss;
-            const irrf = calcularIRRF(baseIRRF);
-
-            // FGTS
-            const fgts = salarioBruto * 0.08; // FGTS é calculado sobre o salário bruto
-
-            // Salário Líquido
-            let salarioLiquido = salarioBrutoAjustado - inss - irrf;
-
-            // Cálculo proporcional se data de admissão for fornecida
-            let proporcional = false;
-            let diasTrabalhados = 30; // Assumindo mês completo
-            if (hasDataAdm) {
-                const data = new Date(dataAdm);
-                const hoje = new Date();
-                const mesAdm = data.getMonth();
-                const anoAdm = data.getFullYear();
-                if (mesAdm === hoje.getMonth() && anoAdm === hoje.getFullYear()) {
-                    const diaAdm = data.getDate();
-                    diasTrabalhados = 30 - diaAdm + 1;
-                    proporcional = true;
+                if (insalubridade) {
+                    adicionalInsalubridade = CONSTANTES.SALARIO_MINIMO * 0.20;
                 }
-            }
 
-            // Ajustar valores proporcionalmente
-            if (proporcional) {
-                const fator = diasTrabalhados / 30;
-                salarioBrutoAjustado *= fator;
-                inss *= fator;
-                irrf *= fator;
-                salarioLiquido *= fator;
-                fgts *= fator;
-            }
-
-            // Preparar detalhes dos horários para o resumo
-            let horariosResumo = '';
-            dias.forEach(dia => {
-                if (detalhesHorarios[dia].folga) {
-                    horariosResumo += `  - *${capitalize(dia)}:* Folga\n`;
-                } else if (detalhesHorarios[dia].trabalhando1Periodo) {
-                    horariosResumo += `  - *${capitalize(dia)}:* ${detalhesHorarios[dia].entrada1} - ${detalhesHorarios[dia].saidaFinal} (${detalhesHorarios[dia].total}h)\n`;
-                } else {
-                    horariosResumo += `  - *${capitalize(dia)}:* ${detalhesHorarios[dia].entrada1} - ${detalhesHorarios[dia].saidaIntervalo}, ${detalhesHorarios[dia].entrada2} - ${detalhesHorarios[dia].saidaFinal} (${detalhesHorarios[dia].total}h)\n`;
+                if (periculosidade) {
+                    adicionalPericulosidade = salarioBruto * 0.30;
                 }
-            });
 
-            // Função para capitalizar a primeira letra
-            function capitalize(str) {
-                return str.charAt(0).toUpperCase() + str.slice(1);
-            }
+                if (totalNoturnas > 0) {
+                    adicionalNoturno = totalNoturnas * (salarioBruto / 220) * 0.20;
+                }
 
-            // Função para padronizar o comprimento das strings
-            function padString(str, length) {
-                return str.length > length ? str.slice(0, length) : str.padEnd(length, ' ');
-            }
+                // Salário bruto ajustado
+                let salarioBrutoAjustado = salarioBruto + adicionalInsalubridade + adicionalPericulosidade + adicionalNoturno;
 
-// Preparar resultado em markdown
-const resultado = `
-*Resumo de Contrato*
+                // Cálculos de descontos
+                const inss = calcularINSS(salarioBrutoAjustado);
+                const baseIRRF = salarioBrutoAjustado - inss;
+                const irrf = calcularIRRF(baseIRRF);
+
+                // Descontos do funcionário
+                let valeTransporteDesconto = 0;
+                if (valeTransporte) {
+                    valeTransporteDesconto = Math.min(salarioBrutoAjustado * 0.06, salarioBrutoAjustado * 0.06);
+                }
+
+                const totalDescontos = inss + irrf + valeTransporteDesconto;
+                const salarioLiquido = salarioBrutoAjustado - totalDescontos;
+
+                // Encargos patronais (Simples Nacional)
+                const fgts = salarioBruto * CONSTANTES.ENCARGOS_SIMPLES.FGTS;
+                const decimoTerceiro = salarioBruto * CONSTANTES.ENCARGOS_SIMPLES.DECIMO_TERCEIRO;
+                const ferias = salarioBruto * CONSTANTES.ENCARGOS_SIMPLES.FERIAS;
+                const simplesnacional = salarioBruto * CONSTANTES.ENCARGOS_SIMPLES.ANEXO_III_IV;
+
+                let custoBeneficios = 0;
+                if (valeAlimentacao && valorValeAlimentacao > 0) {
+                    custoBeneficios += valorValeAlimentacao;
+                }
+
+                const totalEncargos = fgts + decimoTerceiro + ferias + simplesnacional;
+                const custoTotalMensal = salarioBruto + totalEncargos + custoBeneficios;
+                const custoTotalAnual = custoTotalMensal * 12;
+
+                // Cálculo proporcional se data de admissão for fornecida
+                let proporcional = false;
+                let diasTrabalhados = 30;
+                if (hasDataAdm) {
+                    const data = new Date(dataAdm);
+                    const hoje = new Date();
+                    const mesAdm = data.getMonth();
+                    const anoAdm = data.getFullYear();
+                    if (mesAdm === hoje.getMonth() && anoAdm === hoje.getFullYear()) {
+                        const diaAdm = data.getDate();
+                        diasTrabalhados = 30 - diaAdm + 1;
+                        proporcional = true;
+                    }
+                }
+
+                // Preparar detalhes dos horários
+                let horariosTabela = '';
+                dias.forEach(dia => {
+                    const detalhe = detalhesHorarios[dia];
+                    const diaFormatado = padString(capitalize(dia), 12);
+                    let horarios = '';
+                    let total = '';
+
+                    if (detalhe.folga) {
+                        horarios = 'Folga';
+                        total = '0.00h';
+                    } else if (detalhe.trabalhando1Periodo) {
+                        horarios = `${detalhe.entrada1} - ${detalhe.saidaFinal}`;
+                        total = `${detalhe.total}h`;
+                    } else {
+                        horarios = `${detalhe.entrada1} - ${detalhe.saidaIntervalo}, ${detalhe.entrada2} - ${detalhe.saidaFinal}`;
+                        total = `${detalhe.total}h`;
+                    }
+
+                    const horariosFormatado = padString(horarios, 35);
+                    const totalFormatado = padString(total, 6);
+
+                    horariosTabela += `${diaFormatado}${horariosFormatado}${totalFormatado}\n`;
+                });
+
+                // Resultado formatado
+                const resultado = `*SIMULAÇÃO DE CUSTO DE FUNCIONÁRIO - SIMPLES NACIONAL 2025*
 
 *Informações do Empregado:*
-- *Nome:* ${nome || 'Não informado'}
+- *Nome:* ${nome}
 - *Data de Admissão:* ${hasDataAdm ? dataAdm : 'Não informado'}
+${proporcional ? `- *Dias Trabalhados no Mês:* ${diasTrabalhados}` : ''}
 
 *Carga Horária:*
 - *Semanal:* ${totalHoras.toFixed(2)} horas
-- *Horários:*
+- *Horas Noturnas:* ${totalNoturnas.toFixed(2)} horas semanais
 
+*Horários:*
 \`\`\`
 Dia         Horários                          Total
-${dias.map(dia => {
-    const detalhe = detalhesHorarios[dia];
-    const diaFormatado = padString(capitalize(dia), 12); // Ajuste baseado no maior dia (Domingo - 7 caracteres + 5 espaços)
-    let horarios = '';
-    let total = '';
+${horariosTabela}\`\`\`
 
-    if (detalhe.folga) {
-        horarios = 'Folga';
-        total = '0.00h';
-    } else if (detalhe.trabalhando1Periodo) {
-        horarios = `${detalhe.entrada1} - ${detalhe.saidaFinal}`;
-        total = `${detalhe.total}h`;
-    } else {
-        horarios = `${detalhe.entrada1} - ${detalhe.saidaIntervalo}, ${detalhe.entrada2} - ${detalhe.saidaFinal}`;
-        total = `${detalhe.total}h`;
-    }
+*Composição Salarial:*
+- *Salário Base:* ${formatarMoeda(salarioBruto)}
+- *Adicional Insalubridade:* ${insalubridade ? formatarMoeda(adicionalInsalubridade) : 'Não aplicável'}
+- *Adicional Periculosidade:* ${periculosidade ? formatarMoeda(adicionalPericulosidade) : 'Não aplicável'}
+- *Adicional Noturno:* ${adicionalNoturno > 0 ? formatarMoeda(adicionalNoturno) : 'Não aplicável'}
+- *Salário Bruto Ajustado:* ${formatarMoeda(salarioBrutoAjustado)}
 
-    const horariosFormatado = padString(horarios, 35);
-    const totalFormatado = padString(total, 6);
+*Descontos do Funcionário:*
+- *INSS:* ${formatarMoeda(inss)} (${((inss/salarioBrutoAjustado)*100).toFixed(2)}%)
+- *IRRF:* ${formatarMoeda(irrf)} (${((irrf/salarioBrutoAjustado)*100).toFixed(2)}%)
+- *Vale Transporte:* ${valeTransporte ? formatarMoeda(valeTransporteDesconto) : 'Não aplicável'}
+- *Total Descontos:* ${formatarMoeda(totalDescontos)}
+- *Salário Líquido:* ${formatarMoeda(salarioLiquido)}
 
-    return `${diaFormatado}${horariosFormatado}${totalFormatado}`;
-}).join('\n')}
-\`\`\`
+*Encargos Patronais (Simples Nacional):*
+- *FGTS (8%):* ${formatarMoeda(fgts)}
+- *13º Salário (8,33%):* ${formatarMoeda(decimoTerceiro)}
+- *Férias + 1/3 (11,11%):* ${formatarMoeda(ferias)}
+- *Simples Nacional (6%):* ${formatarMoeda(simplesnacional)}
+- *Total Encargos:* ${formatarMoeda(totalEncargos)}
 
-*Salário:*
-- *Salário Bruto:* R$${salarioBruto.toFixed(2)}
-- *Salário Líquido:* R$${salarioLiquido.toFixed(2)}
+*Benefícios Adicionais:*
+- *Vale Alimentação:* ${valeAlimentacao ? formatarMoeda(valorValeAlimentacao) : 'Não aplicável'}
+- *Total Benefícios:* ${formatarMoeda(custoBeneficios)}
 
-*Descontos:*
-- *INSS:* R$${inss.toFixed(2)}
-- *IRRF:* R$${irrf.toFixed(2)}
-- *FGTS (8%):* R$${fgts.toFixed(2)}
+*CUSTO TOTAL PARA A EMPRESA:*
+- *Custo Mensal:* ${formatarMoeda(custoTotalMensal)}
+- *Custo Anual:* ${formatarMoeda(custoTotalAnual)}
 
-*Adicionais:*
-- *Horas Noturnas:* ${totalNoturnas.toFixed(2)} horas semanais com adicional de 20%
-- *Insalubridade:* ${insalubridade ? 'Sim (20%)' : 'Não'}
-- *Periculosidade:* ${periculosidade ? 'Sim (40%)' : 'Não'}
+*RESUMO PERCENTUAL:*
+- *Encargos sobre salário base:* ${((totalEncargos/salarioBruto)*100).toFixed(2)}%
+- *Custo adicional total:* ${formatarMoeda(totalEncargos + custoBeneficios)}
 
-*Valores para a Empresa:*
-- *Salário Bruto* R$${salarioBruto.toFixed(2)}
-- *FGTS (8%)* R$${fgts.toFixed(2)}
-- *Total Encargos (FGTS)*R$${fgts.toFixed(2)}
+---
+⚠️ *Simulação para empresa no Simples Nacional (Anexo III/IV - Serviços)*
+📅 *Gerado em:* ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR')}`;
 
-*Valores para o Empregado:*
-- *Salário Líquido:* R$${salarioLiquido.toFixed(2)}
-- *Adicionais:* FGTS depositado mensalmente
-- *Descontos:* INSS R$${inss.toFixed(2)}, IRRF R$${irrf.toFixed(2)}
-`.trim();
+                document.getElementById('resultado').value = resultado;
 
-document.getElementById('resultado').value = resultado;
-
+            } catch (error) {
+                alert(error);
+                console.error(error);
+            }
         }
 
-        // Função para capitalizar a primeira letra
-        function capitalize(str) {
-            return str.charAt(0).toUpperCase() + str.slice(1);
+        function copiarResultado() {
+            const textarea = document.getElementById('resultado');
+            
+            if (textarea.value.trim() === '') {
+                alert('Realize o cálculo primeiro antes de copiar.');
+                return;
+            }
+
+            textarea.select();
+            textarea.setSelectionRange(0, 99999);
+
+            try {
+                document.execCommand('copy');
+                alert('Resultado copiado com sucesso!');
+            } catch (err) {
+                navigator.clipboard.writeText(textarea.value).then(() => {
+                    alert('Resultado copiado com sucesso!');
+                }).catch(() => {
+                    alert('Não foi possível copiar automaticamente. Selecione o texto e copie manualmente.');
+                });
+            }
         }
 
         // Preencher horários padrão quando a página carrega
         window.onload = function() {
             const dias = ['segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado'];
             dias.forEach(dia => {
-                const entrada1 = document.getElementById(`${dia}Entrada1`);
-                const saidaIntervalo = document.getElementById(`${dia}SaidaIntervalo`);
-                const entrada2 = document.getElementById(`${dia}Entrada2`);
-                const saidaFinal = document.getElementById(`${dia}SaidaFinal`);
-                
                 if (dia !== 'sabado') {
-                    entrada1.value = '08:30';
-                    saidaIntervalo.value = '12:00';
-                    entrada2.value = '14:00';
-                    saidaFinal.value = '17:50';
+                    document.getElementById(`${dia}Entrada1`).value = '08:30';
+                    document.getElementById(`${dia}SaidaIntervalo`).value = '12:00';
+                    document.getElementById(`${dia}Entrada2`).value = '14:00';
+                    document.getElementById(`${dia}SaidaFinal`).value = '17:50';
                 } else {
-                    entrada1.value = '08:30';
-                    saidaIntervalo.value = '12:00';
-                    entrada2.value = '14:00';
-                    saidaFinal.value = '17:50';
+                    document.getElementById(`${dia}Entrada1`).value = '08:30';
+                    document.getElementById(`${dia}SaidaIntervalo`).value = '12:00';
                 }
             });
         };
